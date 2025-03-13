@@ -21,6 +21,8 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { RightSidebarCalendar } from '../sidebar/RightSidebarCalendar'
 
 const locales = {
   es: es
@@ -40,71 +42,51 @@ export const CalendarPrincipal = () => {
   const [isNewEventDialogOpen, setIsNewEventDialogOpen] = useState(false)
 
   return (
-    <div className='flex flex-col justify-center pt-12'>
-      {/* <div className="h-full flex flex-col p-4"> */}
-      <div className='flex justify-between items-center mb-4'>
-        <h2 className='text-xl font-bold'>Calendario de Clases</h2>
-        <div className='flex gap-2'>
-          <Select
-            value={view}
-            onValueChange={(v) => setView(v as View)}>
-            <SelectTrigger className='w-[180px]'>
-              <SelectValue placeholder='Selecciona una vista' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={Views.DAY}>Día</SelectItem>
-              <SelectItem value={Views.WEEK}>Semana</SelectItem>
-              <SelectItem value={Views.MONTH}>Mes</SelectItem>
-              <SelectItem value={Views.AGENDA}>Agenda</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            onClick={() => setIsNewEventDialogOpen(true)}
-            size='sm'
-            className='gap-1'>
-            <Plus size={16} /> Nueva Clase
-          </Button>
-        </div>
-      </div>
-      <Card className='flex-1'>
-        <CardContent className='p-0 h-full'>
-          <DnDCalendar
-            localizer={localizer}
-            events={events}
-            // startAccessor='start'
-            // endAccessor='end'
-            style={{ height: '45rem' }}
-            views={['month', 'week', 'day', 'agenda']}
-            view={view}
-            onView={setView}
-            date={date}
-            onNavigate={setDate}
-            selectable
-            resizable
-            // onSelectSlot={handleSelectSlot}
-            // onSelectEvent={handleSelectEvent}
-            // onEventDrop={handleEventDrop}
-            // onEventResize={handleEventResize}
-            // eventPropGetter={eventPropGetter}
-            // components={components}
-            culture='es'
-            messages={{
-              today: 'Hoy',
-              previous: 'Anterior',
-              next: 'Siguiente',
-              month: 'Mes',
-              week: 'Semana',
-              day: 'Día',
-              agenda: 'Agenda',
-              date: 'Fecha',
-              time: 'Hora',
-              event: 'Evento',
-              showMore: (total) => `+ Ver más (${total})`
-            }}
-            popup
-          />
-        </CardContent>
-      </Card>
-    </div>
+    <SidebarProvider className='md:min-h-[95%]'>
+      <SidebarInset>
+        {/* <div className="h-full flex flex-col p-4"> */}
+
+        <Card className=''>
+          <CardContent className='p-0 '>
+            <DnDCalendar
+              localizer={localizer}
+              events={events}
+              // startAccessor='start'
+              // endAccessor='end'
+              style={{ height: '45rem' }}
+              views={['month', 'week', 'day', 'agenda']}
+              view={view}
+              onView={setView}
+              date={date}
+              onNavigate={setDate}
+              selectable
+              resizable
+              // onSelectSlot={handleSelectSlot}
+              // onSelectEvent={handleSelectEvent}
+              // onEventDrop={handleEventDrop}
+              // onEventResize={handleEventResize}
+              // eventPropGetter={eventPropGetter}
+              // components={components}
+              culture='es'
+              messages={{
+                today: 'Hoy',
+                previous: 'Anterior',
+                next: 'Siguiente',
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                agenda: 'Agenda',
+                date: 'Fecha',
+                time: 'Hora',
+                event: 'Evento',
+                showMore: (total) => `+ Ver más (${total})`
+              }}
+              popup
+            />
+          </CardContent>
+        </Card>
+      </SidebarInset>
+      <RightSidebarCalendar />
+    </SidebarProvider>
   )
 }

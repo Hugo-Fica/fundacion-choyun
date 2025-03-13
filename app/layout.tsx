@@ -60,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className='h-16 md:h-16'>
               <NavigationMenuPage />
             </div>
-            <main className='flex-grow flex justify-center items-center pt-5'>{children}</main>
+            <main className='flex-grow flex justify-center items-center'>{children}</main>
             <Footer />
           </ClientProviders>
         </div>

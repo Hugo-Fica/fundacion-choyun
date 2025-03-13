@@ -3,21 +3,24 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarHeader
+  SidebarHeader,
+  SidebarTrigger
 } from '@/components/ui/sidebar'
 
 export const LeftSidebarCalendar = () => {
   return (
     <Sidebar
-      className='mt-[4rem] h-full'
+      className='fixed top-16 h-[87.8%] '
       side='left'
-      variant='sidebar'>
-      <SidebarHeader />
+      collapsible='icon'>
+      <SidebarHeader className='bg-cyan-500'>
+        <SidebarTrigger />
+      </SidebarHeader>
       <SidebarContent className='bg-red-500'>
         <SidebarGroup />
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter className='bg-cyan-500'></SidebarFooter>
     </Sidebar>
   )
 }
