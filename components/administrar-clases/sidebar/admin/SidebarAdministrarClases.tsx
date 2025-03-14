@@ -9,7 +9,7 @@ import {
   useSidebar
 } from '@/components/ui/sidebar'
 import { BookPlus } from 'lucide-react'
-import { ModalAddSchedule } from './ModalAddClass'
+import { ModalAddSchedule } from './ModalAddSchedule'
 
 export const SidebarAdministrarClases = () => {
   const { open, toggleSidebar } = useSidebar()
