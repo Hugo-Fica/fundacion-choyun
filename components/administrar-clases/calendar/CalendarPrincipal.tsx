@@ -22,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { RightSidebarCalendar } from '../sidebar/RightSidebarCalendar'
+import { SidebarAdministrarClases } from '../sidebar/admin/SidebarAdministrarClases'
 
 const locales = {
   es: es
@@ -43,7 +43,7 @@ export const CalendarPrincipal = () => {
 
   return (
     <SidebarProvider className='md:min-h-[95%]'>
-      <SidebarInset>
+      <SidebarInset className='p-10'>
         {/* <div className="h-full flex flex-col p-4"> */}
 
         <Card className=''>
@@ -86,7 +86,7 @@ export const CalendarPrincipal = () => {
           </CardContent>
         </Card>
       </SidebarInset>
-      <RightSidebarCalendar />
+      <SidebarAdministrarClases />
     </SidebarProvider>
   )
 }

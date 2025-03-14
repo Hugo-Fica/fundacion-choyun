@@ -1,6 +1,6 @@
 import { CustomTrigger } from '@/components/administrar-clases/sidebar/button/CustomTrigger'
 import { LeftSidebarCalendar } from '@/components/administrar-clases/sidebar/LeftSidebarCalendar'
-import { RightSidebarCalendar } from '@/components/administrar-clases/sidebar/RightSidebarCalendar'
+import { SidebarAdministrarClases } from '@/components/administrar-clases/sidebar/admin/SidebarAdministrarClases'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
 export default function AdminClassLayout({ children }: { children: React.ReactNode }) {

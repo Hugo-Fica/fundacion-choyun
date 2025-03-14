@@ -16,9 +16,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       where: whereClause,
       include: {
         schedule: true
-      },
-      orderBy: {
-        date: 'asc'
       }
     })
 
@@ -36,22 +33,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body: CreateDayRequest = await request.json()
-    const { day, date } = body
+    const { day } = body
 
     // Validar los datos
     if (!day) {
       return NextResponse.json({ error: 'Day name is required' }, { status: 400 })
     }
 
-    if (!date) {
-      return NextResponse.json({ error: 'Date is required' }, { status: 400 })
-    }
-
     // Crear el día
     const newDay = await prisma.day.create({
       data: {
-        day,
-        date: new Date(date)
+        day
       }
     })
 

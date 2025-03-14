@@ -18,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         day: true,
         classes: true
       },
-      orderBy: [{ day: { date: 'asc' } }, { startTime: 'asc' }]
+      orderBy: [{ day: { day: 'asc' } }, { startTime: 'asc' }]
     })
 
     return NextResponse.json(schedules)
