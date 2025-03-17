@@ -22,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { SidebarAdministrarClases } from '../sidebar/admin/SidebarAdministrarClases'
+import { AdminClassSidebar } from '../sidebar/admin/AdminClassSidebar'
 
 const locales = {
   es: es
@@ -86,7 +86,7 @@ export const CalendarPrincipal = () => {
           </CardContent>
         </Card>
       </SidebarInset>
-      <SidebarAdministrarClases />
+      <AdminClassSidebar />
     </SidebarProvider>
   )
 }

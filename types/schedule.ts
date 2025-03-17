@@ -1,20 +1,19 @@
 import { BaseModel } from './global'
-import { DayMogno } from './day'
 import { StudentInClassMongo } from './student'
 
 export type ScheduleMongo = BaseModel & {
   startTime: string
   endTime: string
-  dayId: string
-  day: DayMogno
+  name: string
+  day: string
   classIds: string[]
   classes: StudentInClassMongo[]
 }
 export type CreateScheduleRequest = {
   startTime: string
   endTime: string
-  dayId: string
-  classIds?: string[]
+  day: string
+  name: string
 }
 
 export type UpdateScheduleRequest = {
@@ -22,4 +21,9 @@ export type UpdateScheduleRequest = {
   endTime?: string
   dayId?: string
   classIds?: string[]
+}
+
+export type ScheduleStore = {
+  schedules: ScheduleMongo[]
+  setSchedules: (schedules: ScheduleMongo[]) => void
 }

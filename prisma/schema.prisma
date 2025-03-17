@@ -19,20 +19,13 @@ model Roles {
   updatedAt   DateTime @updatedAt
 }
 
-model Day {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  day       String     // Lunes, Martes, etc.
-  schedule  Schedule[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
 
 model Schedule {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    
   startTime String    // formato: "HH:MM"
   endTime   String    // formato: "HH:MM"
-  day       Day       @relation(fields: [dayId], references: [id])
-  dayId     String    @db.ObjectId
+  day       String
   
   // Relación explícita para clases (many-to-many)
   classIds String[] @db.ObjectId
