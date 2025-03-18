@@ -34,16 +34,21 @@ import { useUserAuthStore } from '@/store/userAuthStore'
 import { useScheduleStore } from '@/store/useScheduleStore'
 import { cn } from '@/utils/calculate'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useQueryClient } from '@tanstack/react-query'
-import { NotebookPen, X } from 'lucide-react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Loader2, NotebookPen, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AdminAddScheduleModal } from './AdminAddScheduleModal'
+import { useScheduleClass } from '@/hooks/useScheduleClass'
+import { toast } from 'sonner'
 
 const formSchema = z.object({
   name: z.string().min(5, { message: 'El nombre de la clase es obligatorio' }),
-  description: z.string()
+  description: z.string(),
+  scheduleIds: z
+    .array(z.string())
+    .min(1, { message: 'Debe seleccionar al menos una hora de clase' })
 })
 
 type Props = {
@@ -52,6 +57,7 @@ type Props = {
 export const AdminAddClassModal = ({ sidebarState }: Props) => {
   const role = useUserAuthStore((state) => state.user?.role)
   const { schedules } = useScheduleStore((state) => state)
+  const { postClass } = useScheduleClass()
   const queryCLient = useQueryClient()
   const [open, setOpen] = useState(false)
   const [openPopover, setOpenPopover] = useState(false)
@@ -61,7 +67,16 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      description: ''
+      description: '',
+      scheduleIds: []
+    }
+  })
+
+  const { isPending, mutateAsync: postClassAsync } = useMutation({
+    mutationKey: ['createClass'],
+    mutationFn: postClass,
+    onSuccess: () => {
+      queryCLient.invalidateQueries()
     }
   })
 
@@ -73,10 +88,23 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
   const handleModal = () => {
     setOpen(!open)
     form.reset()
+    setSelectedValues([])
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
+    const isPosted = await postClassAsync({
+      name: values.name,
+      description: values.description,
+      scheduleIds: values.scheduleIds
+    })
+    if (isPosted) {
+      toast.success('Clase creada exitosamente')
+      form.reset()
+      setOpen(false)
+      setSelectedValues([])
+    } else {
+      toast.error('Error al crear la clase')
+    }
   }
   return (
     <>
@@ -142,7 +170,8 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                   )}
                 />
                 <FormField
-                  name='name'
+                  control={form.control}
+                  name='scheduleIds'
                   render={({ field }) => (
                     <FormItem className='col-span-full w-full'>
                       <FormLabel>Seleccionar horarios de clase</FormLabel>
@@ -156,7 +185,7 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                               aria-expanded={openPopover}
                               className={cn(
                                 'flex min-h-10 w-full flex-wrap items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                                selectedValues.length > 0 && 'pb-1'
+                                field.value.length > 0 && 'pb-1'
                               )}
                               onClick={() => setOpenPopover(!openPopover)}>
                               {selectedSchedules.length > 0 ? (
@@ -173,9 +202,11 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                                           if (e.key === 'Enter') {
                                             e.preventDefault()
                                             e.stopPropagation()
-                                            setSelectedValues(
-                                              selectedValues.filter((value) => value !== item.id)
+                                            const newValues = field.value.filter(
+                                              (value) => value !== item.id
                                             )
+                                            setSelectedValues(newValues)
+                                            field.onChange(newValues)
                                           }
                                         }}
                                         onMouseDown={(e) => {
@@ -185,9 +216,11 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                                         onClick={(e) => {
                                           e.preventDefault()
                                           e.stopPropagation()
-                                          setSelectedValues(
-                                            selectedValues.filter((value) => value !== item.id)
+                                          const newValues = field.value.filter(
+                                            (value) => value !== item.id
                                           )
+                                          setSelectedValues(newValues)
+                                          field.onChange(newValues)
                                         }}>
                                         <X className='h-3 w-3 text-muted-foreground hover:text-foreground' />
                                       </button>
@@ -210,20 +243,23 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                                 <CommandInput placeholder='Buscar horarios de clase...' />
                                 <CommandList>
                                   <CommandEmpty>Horario no encontrado.</CommandEmpty>
-                                  <CommandGroup className='max-h-64 overflow-auto'>
+                                  <CommandGroup className='max-h-[12rem] overflow-auto'>
                                     {schedules.map((item) => {
-                                      const isSelected = selectedValues.includes(item.id)
+                                      const isSelected = field.value.includes(item.id)
                                       return (
                                         <CommandItem
                                           key={item.id}
                                           onSelect={() => {
-                                            setSelectedValues((prev) => {
-                                              if (isSelected) {
-                                                return prev.filter((value) => value !== item.id)
-                                              } else {
-                                                return [...prev, item.id]
-                                              }
-                                            })
+                                            let newValues
+                                            if (isSelected) {
+                                              newValues = field.value.filter(
+                                                (value) => value !== item.id
+                                              )
+                                            } else {
+                                              newValues = [...field.value, item.id]
+                                            }
+                                            setSelectedValues(newValues)
+                                            field.onChange(newValues)
                                           }}>
                                           <div
                                             className={cn(
@@ -253,13 +289,13 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                               <div className='flex justify-center gap-5 my-3 px-3'>
                                 <Button
                                   type='button'
-                                  className=' w-full'
+                                  className=' w-[50%]'
                                   onClick={() => setOpenPopover(!openPopover)}
                                   variant='ghost'>
                                   Cancelar
                                 </Button>
                                 <Button
-                                  className=' bg-green-500 hover:bg-green-700 w-full'
+                                  className=' bg-green-500 hover:bg-green-700 w-[50%]'
                                   onClick={() => setOpenPopover(!openPopover)}>
                                   Listo
                                 </Button>
@@ -278,16 +314,16 @@ export const AdminAddClassModal = ({ sidebarState }: Props) => {
                   type='button'
                   variant='ghost'
                   className='w-full'
-                  //   disabled={isPending}
+                  disabled={isPending}
                   onClick={handleModal}>
-                  {/* {isPending && <Loader2 className='animate-spin' />} */}
+                  {isPending && <Loader2 className='animate-spin' />}
                   Cancelar
                 </Button>
                 <Button
                   className=' bg-green-500 hover:bg-green-700 w-full'
                   //   disabled={isPending}
                 >
-                  {/* {isPending && <Loader2 className='animate-spin' />} */}
+                  {isPending && <Loader2 className='animate-spin' />}
                   Crear clase
                 </Button>
               </DialogFooter>

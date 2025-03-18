@@ -5,10 +5,8 @@ import { CreateScheduleRequest } from '@/types/schedule'
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const schedules = await prisma.schedule.findMany()
-    console.log(schedules)
     return NextResponse.json(schedules)
   } catch (error: any) {
-    console.error('Error fetching schedules:', error)
     return NextResponse.json(
       { error: 'Error fetching schedules', details: error.message },
       { status: 500 }

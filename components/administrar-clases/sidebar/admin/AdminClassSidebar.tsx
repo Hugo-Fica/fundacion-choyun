@@ -15,6 +15,7 @@ import { useScheduleClass } from '@/hooks/useScheduleClass'
 import { AdminAddClassModal } from './AdminAddClassModal'
 import { useScheduleStore } from '@/store/useScheduleStore'
 import { useEffect } from 'react'
+import { AdminAddTeacherAndStudent } from './AdminAddTeacherAndStudent'
 
 export const AdminClassSidebar = () => {
   const { open, toggleSidebar } = useSidebar()
@@ -44,7 +45,7 @@ export const AdminClassSidebar = () => {
           {open ? (
             <>
               <BookPlus className='text-black w-4 h-4' />
-              <span className='text-black'>Administrar Clases</span>
+              <span className='text-black'>Administrador de Clases</span>
             </>
           ) : (
             <BookPlus className='text-black w-4 h-4' />
@@ -57,6 +58,11 @@ export const AdminClassSidebar = () => {
           className='gap-3'>
           <AdminAddScheduleModal sidebarState={open} />
           <AdminAddClassModal sidebarState={open} />
+        </SidebarGroup>
+        <SidebarGroup
+          title='Administrar información basica'
+          className='gap-3'>
+          <AdminAddTeacherAndStudent sidebarState={open} />
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>

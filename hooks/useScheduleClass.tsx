@@ -1,5 +1,6 @@
 import { CreateScheduleRequest, ScheduleMongo } from '@/types/schedule'
 import axios, { AxiosError } from 'axios'
+import { CreateClassRequest } from '../types/class'
 
 export const useScheduleClass = () => {
   const postScheduleClass = async (schedule: CreateScheduleRequest) => {
@@ -7,7 +8,7 @@ export const useScheduleClass = () => {
       const { data } = await axios.post('/api/protected/schedule', schedule)
 
       return {
-        message: data.message
+        message: data.message as string
       }
     } catch (error) {
       const err = error as AxiosError<{ message: string }>
@@ -45,6 +46,25 @@ export const useScheduleClass = () => {
       }
     }
   }
+  const postClass = async (classSchedule: CreateClassRequest) => {
+    try {
+      const { data } = await axios.post('/api/protected/class', classSchedule)
 
-  return { getScheduleClass, postScheduleClass }
+      return {
+        message: data.message as string
+      }
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>
+      if (err.response && err.response.data && err.response.data.message) {
+        return {
+          message: err.response.data.message
+        }
+      } else {
+        return {
+          message: 'Error desconocido'
+        }
+      }
+    }
+  }
+  return { getScheduleClass, postScheduleClass, postClass }
 }

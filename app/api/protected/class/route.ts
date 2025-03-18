@@ -4,46 +4,17 @@ import { CreateClassRequest } from '@/types/class'
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
-    const name = searchParams.get('name')
-
-    const whereClause: { name?: { contains: string } } = {}
-    if (name) {
-      whereClause.name = {
-        contains: name
-      }
-    }
     const classChoyun = await prisma.class.findMany({
-      where: whereClause,
-      include: {
-        schedules: true,
-        teacherUsers: {
-          include: {
-            teacher: {
-              select: {
-                id: true,
-                names: true,
-                lastnames: true,
-                email: true
-              }
-            }
-          }
-        },
-        studentUsers: {
-          include: {
-            student: {
-              select: {
-                id: true,
-                names: true,
-                lastnames: true,
-                email: true
-              }
-            }
-          }
-        }
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        schedules: { select: { id: true, name: true, day: true, startTime: true, endTime: true } },
+        teacherUsers: { select: { id: true, teacher: true } },
+        studentUsers: { select: { id: true, student: true } }
       }
     })
-    return NextResponse.json({ classChoyun: classChoyun })
+    return NextResponse.json({ classChoyun: classChoyun }, { status: 200 })
   } catch (error) {
     NextResponse.json({ message: 'Hubo un error', error: error }, { status: 500 })
   }
@@ -92,7 +63,7 @@ export async function POST(req: NextRequest) {
         })
       )
     }
-    return NextResponse.json(newClass, { status: 201 })
+    return NextResponse.json({ message: 'Clase creada' }, { status: 201 })
   } catch (error) {
     return NextResponse.json(
       { error: 'Error creating class', details: (error as Error).message },
